@@ -1,0 +1,3 @@
+INSERT INTO public.alumnos(id,codigo,nombres,apellidos,fecha_nacimiento,sexo,alumno_imagen,estado) values(1,'2015200643','Michael','Mejia','1994-10-03','M','',false)
+INSERT INTO public.alumnos(id,codigo,nombres,apellidos,fecha_nacimiento,sexo,alumno_imagen,estado) values(2,'2016201028','Santiago','Airaldi','1998-01-25','M','',false)
+INSERT INTO public.alumnos(id,codigo,nombres,apellidos,fecha_nacimiento,sexo,alumno_imagen,estado) values(3,'2020201510','Mario','Castillo','1997-05-13','M','',false)

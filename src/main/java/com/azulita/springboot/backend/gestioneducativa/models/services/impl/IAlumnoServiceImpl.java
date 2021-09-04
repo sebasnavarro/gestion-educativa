@@ -2,7 +2,6 @@ package com.azulita.springboot.backend.gestioneducativa.models.services.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +16,11 @@ import com.azulita.springboot.backend.gestioneducativa.models.services.IAlumnoSe
 @Service
 public class IAlumnoServiceImpl implements IAlumnoService{
 
-	@Autowired
-	private IAlumnoDao alumnoDao;
+	private final IAlumnoDao alumnoDao;
+	
+	public IAlumnoServiceImpl(IAlumnoDao alumnoDao){
+		this.alumnoDao = alumnoDao;
+	}
 	
 	@Override
 	@Transactional(readOnly=true)

@@ -27,41 +27,24 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(name="docente")
+@Table(name="horario")
 
-public class Docente implements Serializable{
-
+public class Horario implements Serializable{
     @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(columnDefinition = "serial")
 	private Long id;
 	
-	@Column(length = 12, nullable = false)
-	private String codigo;
-	
-	@Column(length = 64, nullable = false)
-	private String nombres;
-	
-	@Column(length = 64, nullable = false)
-	private String apellidos;
-	
-	@Column(nullable = false)
-	private char sexo;
-
-    @Column(length = 64,nullable = false)
-	private String correo;
-
-    @Column(name = "docente_imagen")
-	private String url;
+	@Column(length = 13, nullable = false)
+	private String hora;
 	
 	@Column(nullable = false, columnDefinition = "boolean default false")
 	private boolean estado;
 	
-	@OneToMany(mappedBy="docente")
+	@OneToMany(mappedBy="horario")
     private Set<Cursos> cursos;
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-    
 }

@@ -16,7 +16,7 @@
 	<name>spring-boot-backend-gestioneducativa</name>
 	<description>spring-boot-backend-gestioneducativa</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

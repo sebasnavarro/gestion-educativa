@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -37,6 +38,7 @@ public class AlumnoRestController {
 		this.alumnoService = alumnoService;
 	}
 
+	@Secured({"ROLE_ADMIN"})	
 	@PostMapping("/alumnos")
 	public ResponseEntity<?> create(@Validated @RequestBody Alumno alumno, BindingResult result) {
 
@@ -62,6 +64,7 @@ public class AlumnoRestController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN","ROLE_USER"})	
 	@GetMapping("/alumnos")
 	public ResponseEntity<?> findAll(
 			@RequestParam(value = "isState", required = false, defaultValue = "false") boolean isState) {
@@ -80,6 +83,7 @@ public class AlumnoRestController {
 		return new ResponseEntity<>(alumnos, HttpStatus.OK);
 	}
 
+	@Secured({"ROLE_ADMIN"})	
 	@PutMapping("/alumnos/{id}")
 	public ResponseEntity<?> update(@Validated @RequestBody Alumno alumno, BindingResult result,
 			@PathVariable Long id) {
@@ -124,6 +128,7 @@ public class AlumnoRestController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
 	}
 	
+	@Secured({"ROLE_ADMIN"})	
 	@DeleteMapping("/alumnos/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		

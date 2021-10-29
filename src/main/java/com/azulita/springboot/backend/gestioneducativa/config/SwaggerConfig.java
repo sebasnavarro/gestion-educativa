@@ -1,4 +1,4 @@
-package com.azulita.springboot.backend.gestioneducativa.config.swagger;
+package com.azulita.springboot.backend.gestioneducativa.config;
 
 
 /**

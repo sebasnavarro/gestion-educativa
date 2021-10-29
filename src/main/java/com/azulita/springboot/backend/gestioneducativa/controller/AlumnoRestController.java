@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.azulita.springboot.backend.gestioneducativa.integration.ReniecAPI;
 import com.azulita.springboot.backend.gestioneducativa.models.entity.Alumno;
 import com.azulita.springboot.backend.gestioneducativa.models.services.IAlumnoService;
 
@@ -33,9 +35,11 @@ import com.azulita.springboot.backend.gestioneducativa.models.services.IAlumnoSe
 public class AlumnoRestController {
 
 	private final IAlumnoService alumnoService;
+	private final ReniecAPI reniecAPI;
 
-	public AlumnoRestController(IAlumnoService alumnoService) {
+	public AlumnoRestController(IAlumnoService alumnoService, ReniecAPI reniecAPI) {
 		this.alumnoService = alumnoService;
+		this.reniecAPI = reniecAPI;
 	}
 
 	@Secured({"ROLE_ADMIN"})	
@@ -43,6 +47,8 @@ public class AlumnoRestController {
 	public ResponseEntity<?> create(@Validated @RequestBody Alumno alumno, BindingResult result) {
 
 		Map<String, Object> response = new HashMap<>();
+		
+		
 		Alumno alumnoNew = null;
 		if (result.hasErrors()) 
 		{
@@ -52,7 +58,14 @@ public class AlumnoRestController {
 			response.put("errors", errors);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
 		}try{
-			alumnoNew = alumnoService.save(alumno);
+			ResponseEntity<?> respuesta = reniecAPI.send(alumno);
+			if(respuesta.getStatusCode()==HttpStatus.OK) {
+				Alumno alumnoReniec = (Alumno) respuesta.getBody();
+				alumnoNew = alumnoService.save(alumnoReniec);
+			}else {
+				alumnoNew = alumnoService.save(alumno);
+			}
+			
 
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error: Se ha producido un error al intentar registrar al alumno");

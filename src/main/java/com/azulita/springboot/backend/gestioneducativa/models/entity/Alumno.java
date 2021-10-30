@@ -56,7 +56,12 @@ public class Alumno implements Serializable{
 	
 	@Column(unique = true)
 	private String email;
-
+/*
+* @add ErickPalacios
+*/
+	@Column(unique = true)
+	private String phone;
+/**/
 	@Column(unique = true, length = 20)
 	private String username;
 	

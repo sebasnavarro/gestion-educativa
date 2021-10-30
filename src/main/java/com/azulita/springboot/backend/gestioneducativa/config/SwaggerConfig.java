@@ -31,7 +31,7 @@ public class SwaggerConfig {
 	
 	private ApiInfo apiInfo() {
 	     return new ApiInfoBuilder()
-	            .title("Gestión educativa API")
+	            .title("Gestión educativa APPweb")
 	            .description("This application designed for integration")
 	             .build();
 	}

@@ -31,7 +31,7 @@ public class ReniecAPI {
 
 	    	try {
 	    	ResponseEntity<Persona> responseEntity = restTemplate
-                    .getForEntity(URL_API_RENIEC+'/'+alumno.getUsername(), Persona.class, params);
+                    .getForEntity(URL_API_RENIEC+'/'+alumno.getDni(), Persona.class, params);
 	    
 	        alumno.setNombres(responseEntity.getBody().getNombre());
 	        alumno.setApellidos(responseEntity.getBody().getApellido());

@@ -63,10 +63,10 @@ public class AlumnoRestController {
 				Alumno alumnoReniec = (Alumno) respuesta.getBody();
 				alumnoNew = alumnoService.save(alumnoReniec);
 			}else {
-				alumnoNew = alumnoService.save(alumno);
+				response.put("mensaje", "Error: No se encontraron datos en la RENIEC");
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 			}
 			
-
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error: Se ha producido un error al intentar registrar al alumno");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));

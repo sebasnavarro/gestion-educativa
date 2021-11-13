@@ -29,11 +29,11 @@ import com.azulita.springboot.backend.gestioneducativa.integration.FacturaAPI;
 @CrossOrigin(origins = { "http://localhost:3000", "*" })
 @RestController
 @RequestMapping("/api/v1")
-public class FacturaController {
+public class FacturaRestController {
     
 	private final FacturaAPI facturaAPI;
 
-	public FacturaController(FacturaAPI facturaAPI) {
+	public FacturaRestController(FacturaAPI facturaAPI) {
 		
 		this.facturaAPI = facturaAPI;
 	}

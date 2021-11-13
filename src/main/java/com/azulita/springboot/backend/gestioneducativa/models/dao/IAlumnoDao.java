@@ -1,6 +1,7 @@
 package com.azulita.springboot.backend.gestioneducativa.models.dao;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,7 @@ import com.azulita.springboot.backend.gestioneducativa.models.entity.Alumno;
 @Repository
 public interface IAlumnoDao extends JpaRepository<Alumno, Long>{
 
-	public List<Alumno> findByEstadoIs(boolean isState);
+	public Page<Alumno> findByEstadoIs(Pageable page, boolean isState);
 	
 	@Modifying
 	@Query("update Alumno a set a.estado=true where a.id=?1")

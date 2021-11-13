@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -78,21 +80,19 @@ public class AlumnoRestController {
 	}
 
 	@Secured({"ROLE_ADMIN","ROLE_USER"})	
-	@GetMapping("/alumnos")
-	public ResponseEntity<?> findAll(
-			@RequestParam(value = "isState", required = false, defaultValue = "false") boolean isState) {
-		List<Alumno> alumnos = null;
+	@GetMapping("/alumnos/page/{page}")
+	public ResponseEntity<?> findAll(@PathVariable Integer page, @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,  @RequestParam(value = "isState", required = false, defaultValue = "false") boolean isState) {
+		Page<Alumno> alumnos = null;
 		Map<String, Object> response = new HashMap<>();
 
 		try{
-			alumnos = alumnoService.findAll(isState);
+			alumnos = alumnoService.findAll(PageRequest.of(page, size), isState);
 
 		}catch (DataAccessException e){
 			response.put("mensaje", "Error: Se ha producido un error al intentar listar los alumnos");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 		return new ResponseEntity<>(alumnos, HttpStatus.OK);
 	}
 

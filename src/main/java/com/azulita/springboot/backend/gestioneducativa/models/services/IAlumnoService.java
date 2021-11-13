@@ -1,6 +1,7 @@
 package com.azulita.springboot.backend.gestioneducativa.models.services;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.azulita.springboot.backend.gestioneducativa.models.entity.Alumno;
 
@@ -10,7 +11,7 @@ import com.azulita.springboot.backend.gestioneducativa.models.entity.Alumno;
  */
 public interface IAlumnoService {
 
-	public List<Alumno> findAll(boolean isState);
+	public Page<Alumno> findAll(Pageable page, boolean isState);
 	
 	public Alumno findById(Long id);
 

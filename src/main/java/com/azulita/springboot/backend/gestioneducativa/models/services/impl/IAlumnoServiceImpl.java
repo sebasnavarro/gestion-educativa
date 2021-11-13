@@ -1,10 +1,9 @@
 package com.azulita.springboot.backend.gestioneducativa.models.services.impl;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.azulita.springboot.backend.gestioneducativa.models.dao.IAlumnoDao;
 import com.azulita.springboot.backend.gestioneducativa.models.entity.Alumno;
 import com.azulita.springboot.backend.gestioneducativa.models.services.IAlumnoService;
@@ -24,8 +23,8 @@ public class IAlumnoServiceImpl implements IAlumnoService{
 	
 	@Override
 	@Transactional(readOnly=true)
-	public List<Alumno> findAll(boolean isState) {
-		return alumnoDao.findByEstadoIs(isState);
+	public Page<Alumno> findAll(Pageable page, boolean isState) {
+		return alumnoDao.findByEstadoIs(page, isState);
 	}
 
 	@Override

@@ -31,7 +31,7 @@ import com.azulita.springboot.backend.gestioneducativa.models.services.IAlumnoSe
  * @author SebasNavarro
  *
  */
-@CrossOrigin(origins = { "http://localhost:3000", "*" })
+@CrossOrigin(origins = { "http://localhost:4200", "*" })
 @RestController
 @RequestMapping("/api/v1")
 public class AlumnoRestController {

@@ -1,6 +1,7 @@
 package com.azulita.springboot.backend.gestioneducativa.auth;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -21,9 +22,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/alumnos/img/**", "/uploads/**").permitAll(); // Permite a todos los usuarios ir a este end point
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/alumnos/img/**", "/uploads/**").permitAll() // Permite a todos los usuarios ir a este end point
 			//.antMatchers(HttpMethod.GET, "/api/alumnos/{id}").hasAnyRole("USER","ADMIN")
-			//.anyRequest().authenticated().and().cors().configurationSource(corsConfigurationSource());
+			.anyRequest().authenticated().and().cors().configurationSource(corsConfigurationSource());
 	}
 	
 	// Metodo que nos permite implementar reglas de seguridad a todos nuestros end
@@ -33,13 +34,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	public CorsConfigurationSource corsConfigurationSource() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
+		config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
 	    //config.setAllowedOrigins(Arrays.asList("https://localhost:3000"));
-		config.addAllowedOrigin("*");
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		//config.addAllowedMethod("*");
-		config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
-		//config.addAllowedHeader("*");
+		config.setAllowCredentials(true);
+		config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));		
 		source.registerCorsConfiguration("/**", config);
 		return source;
 	}

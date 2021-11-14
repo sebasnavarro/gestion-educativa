@@ -26,7 +26,7 @@ import com.azulita.springboot.backend.gestioneducativa.integration.FacturaAPI;
  * @author ErickPalacios
  *
  */
-@CrossOrigin(origins = { "http://localhost:3000", "*" })
+@CrossOrigin(origins = { "http://localhost:4200", "*" })
 @RestController
 @RequestMapping("/api/v1")
 public class FacturaRestController {

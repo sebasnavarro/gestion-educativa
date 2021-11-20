@@ -51,7 +51,7 @@ public class Alumno implements Serializable{
 	private String apellidos;
 	
 	@Column(nullable = false)
-	private char sexo;
+	private String sexo;
 	
 	@Column(name = "fecha_nacimiento")
 	@Temporal(TemporalType.DATE)

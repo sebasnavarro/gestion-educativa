@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.azulita.springboot.backend.gestioneducativa.integration.CrmAPI;
 import com.azulita.springboot.backend.gestioneducativa.integration.ReniecAPI;
 import com.azulita.springboot.backend.gestioneducativa.models.entity.Alumno;
 import com.azulita.springboot.backend.gestioneducativa.models.services.IAlumnoService;
@@ -38,10 +39,12 @@ public class AlumnoRestController {
 
 	private final IAlumnoService alumnoService;
 	private final ReniecAPI reniecAPI;
+	private final CrmAPI crmAPI;
 
-	public AlumnoRestController(IAlumnoService alumnoService, ReniecAPI reniecAPI) {
+	public AlumnoRestController(IAlumnoService alumnoService, ReniecAPI reniecAPI, CrmAPI crmAPI) {
 		this.alumnoService = alumnoService;
 		this.reniecAPI = reniecAPI;
+		this.crmAPI = crmAPI;
 	}
 
 	@Secured({"ROLE_ADMIN"})	
@@ -52,27 +55,43 @@ public class AlumnoRestController {
 		
 		
 		Alumno alumnoNew = null;
-		if (result.hasErrors()) 
-		{
+		
+		if (result.hasErrors()) {
 			List<String> errors = result.getFieldErrors().stream()
 					.map(err -> "El campo '" + err.getField() + "' " + err.getDefaultMessage())
 					.collect(Collectors.toList());
 			response.put("errors", errors);
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
-		}try{
-			ResponseEntity<?> respuesta = reniecAPI.send(alumno);
-			if(respuesta.getStatusCode()==HttpStatus.OK) {
-				Alumno alumnoReniec = (Alumno) respuesta.getBody();
+		}
+
+		try{
+			ResponseEntity<?> resReniec = reniecAPI.send(alumno);
+			System.out.print("STATUS DE LA RENIEC: "+resReniec.getStatusCode());
+			if(resReniec.getStatusCode()==HttpStatus.OK) {
+				Alumno alumnoReniec = (Alumno) resReniec.getBody();
 				alumnoNew = alumnoService.save(alumnoReniec);
+				System.out.println("RENIEC: "+ alumnoNew);
+
+				
 			}else {
-				response.put("mensaje", "Error: No se encontraron datos en la RENIEC");
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+				ResponseEntity<?> resCrm = crmAPI.send(alumno);
+				System.out.print("STATUS DEl CRM: "+resCrm.getStatusCode());
+
+				if(resCrm.getStatusCode()==HttpStatus.OK) {
+					Alumno alumnoCrmAPI = (Alumno) resCrm.getBody();
+					alumnoNew = alumnoService.save(alumnoCrmAPI);
+				}else {
+					response.put("mensaje", "Error: Servicio externos caídos");
+					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+				
+				}
+				System.out.println("CRM: "+alumnoNew);
 			}
 			
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error: Se ha producido un error al registrar al alumno");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
 		}
 		response.put("mensaje", "El alumno ha sido registrado con éxito!");
 		response.put("alumno", alumnoNew);
@@ -95,6 +114,29 @@ public class AlumnoRestController {
 		}
 		return new ResponseEntity<>(alumnos, HttpStatus.OK);
 	}
+
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
+	@GetMapping("/alumnos/{id}")
+	public ResponseEntity<?> show(@PathVariable Long id) {
+		Alumno alumno = null;
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			alumno = alumnoService.findById(id);
+		} catch (DataAccessException e) {
+			response.put("mensaje", "Error: Se ha producido un error al intentar buscar al alumno");
+			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		if (alumno == null) {
+			response.put("mensaje", "Error: El ID: ".concat(id.toString().concat(" no existe en la tabla alumno!")));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+		}
+
+		return new ResponseEntity<Alumno>(alumno, HttpStatus.OK);
+	}
+
 
 	@Secured({"ROLE_ADMIN"})	
 	@PutMapping("/alumnos/{id}")
@@ -121,14 +163,30 @@ public class AlumnoRestController {
 		}
 
 		try {
-
-			alumnoActual.setNombres(alumno.getNombres());
-			alumnoActual.setApellidos(alumno.getApellidos());
 			alumnoActual.setCodigo(alumno.getCodigo());
-			alumnoActual.setSexo(alumno.getSexo());
-			alumnoActual.setFechaNacimiento(alumno.getFechaNacimiento());
-			alumnoUpdated = alumnoService.save(alumnoActual);
+			alumnoActual.setDni(alumno.getDni());
+			ResponseEntity<?> resReniec = reniecAPI.send(alumnoActual);
+			System.out.print("STATUS DE LA RENIEC: "+resReniec.getStatusCode());
+			if(resReniec.getStatusCode()==HttpStatus.OK) {
+				Alumno alumnoReniec = (Alumno) resReniec.getBody();
+				alumnoUpdated = alumnoService.save(alumnoReniec);
+				System.out.println("RENIEC: "+ alumnoUpdated);
 
+			}else {
+				ResponseEntity<?> resCrm = crmAPI.send(alumnoActual);
+				System.out.print("STATUS DEl CRM: "+resCrm.getStatusCode());
+
+				if(resCrm.getStatusCode()==HttpStatus.OK) {
+					Alumno alumnoCrmAPI = (Alumno) resCrm.getBody();
+					alumnoUpdated= alumnoService.save(alumnoCrmAPI);
+				}else {
+					response.put("mensaje", "Error: Servicio externos caídos");
+					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+				
+				}
+				System.out.println("CRM: "+alumnoUpdated);
+			}
+			
 		} catch (DataAccessException e) {
 			response.put("mensaje", "Error: No se pudo modificar los datos del alumno.");
 			response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));

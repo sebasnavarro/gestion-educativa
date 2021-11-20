@@ -37,6 +37,7 @@ public class ReniecAPI {
 	        alumno.setApellidos(responseEntity.getBody().getApellido());
 	        alumno.setFechaNacimiento(responseEntity.getBody().getFechaNacimiento());
 	        alumno.setEmail(responseEntity.getBody().getNombre()+'_'+responseEntity.getBody().getApellido()+"@usmp.pe");
+	        alumno.setSexo(responseEntity.getBody().getSexo());
 	        
 	    	}catch(HttpStatusCodeException e) {
 	    		response.put("mensaje", "Error: Se ha producido un error al intentar consumir el servicio de la reniec");
